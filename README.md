@@ -100,6 +100,16 @@ byte[] cipher = new byte[data.Length + Hydrogen.Library.headerBytes];
 if (Hydrogen.Library.Encrypt(cipher, data, data.Length, context, key))
 	Console.WriteLine("Data successfully encrypted!");
 
+// Create probe for cipher
+byte[] probe = new byte[Hydrogen.Library.probeBytes];
+
+if (Hydrogen.Library.CreateProbe(probe, cipher, cipher.Length, context, key))
+	Console.WriteLine("Probe successfully created!");
+	
+// Verify probe
+if (Hydrogen.Library.VerifyProbe(probe, cipher, cipher.Length, context, key))
+	Console.WriteLine("Probe successfully verified!");
+
 // Decrypt data
 byte[] data = new byte[cipher.Length - Hydrogen.Library.headerBytes];
 
