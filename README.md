@@ -92,7 +92,7 @@ Hydrogen.Library.SecretKeygen(key);
 
 // Secret data
 string message = "Secret message for future generations";
-byte[] data = Encoding.ASCII.GetBytes(message);;
+byte[] data = Encoding.ASCII.GetBytes(message);
 
 // Encrypt data
 byte[] cipher = new byte[data.Length + Hydrogen.Library.headerBytes];
