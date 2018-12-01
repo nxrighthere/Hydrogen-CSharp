@@ -85,8 +85,48 @@ if (Hydrogen.Library.UpgradeKey(storedKey, newMasterKey, 2000, 1024, 2))
 
 ##### Secure network communication based on Noise protocol:
 ```c#
+// Server
+KeyPair serverKeyPair = default(KeyPair);
 
+// Generate long-term key pair
+Hydrogen.Library.ExchangeKeygen(out serverKeyPair);
+
+/* Send `serverKeyPair.publicKey` to the client */
+
+// Client
+SessionKeyPair clientSessionKeyPair = default(SessionKeyPair);
+byte[] packet = new byte[Hydrogen.Library.packetBytes];
+
+// Generate session keys and a packet with an ephemeral public key
+if (Hydrogen.Library.N1(out clientSessionKeyPair, packet, serverKeyPair.publicKey)))
+	Console.WriteLine("Session key pair successfully generated!");
+
+/* Send `packet` to the server */
+
+// Server
+SessionKeyPair serverSessionKeyPair = default(SessionKeyPair);
+
+// Process the initial request from the client and generate session keys
+if (Hydrogen.Library.N2(out serverSessionKeyPair, packet, ref serverKeyPair))
+	Console.WriteLine("Session key pair successfully generated!");
+
+/* Send a signal to the client that secure communication is established */
+
+// Client
+string message = "Do you want to take a look at my high-poly things tonight?";
+byte[] data = Encoding.ASCII.GetBytes(message);;
+byte[] packet = new byte[data.Length + Hydrogen.Library.headerBytes];
+
+if (Hydrogen.Library.Encrypt(packet, data, data.Length, context, clientSessionKeyPair.sendKey))
+	Console.WriteLine("Data successfully encrypted!");
+
+/* Send `packet` to the server */
+
+// Server
+byte[] data = new byte[packet.Length - Hydrogen.Library.headerBytes];
+
+if (Hydrogen.Library.Decrypt(data, packet, packet.Length, context, serverSessionKeyPair.receiveKey))
+	Console.WriteLine("Data successfully decrypted!");
+
+Console.WriteLine("Received message: " + Encoding.ASCII.GetString(data));
 ```
-
-API reference
---------
