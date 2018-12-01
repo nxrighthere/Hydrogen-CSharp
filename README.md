@@ -83,6 +83,30 @@ if (Hydrogen.Library.UpgradeKey(storedKey, newMasterKey, 2000, 1024, 2))
 	Console.WriteLine("Stored key successfully upgraded!");
 ```
 
+##### Secret key encryption:
+```c#
+byte[] key = new byte[Hydrogen.Library.secretKeyBytes]; // Storage for secret key
+
+// Generate secret key
+Hydrogen.Library.SecretKeygen(key);
+
+// Secret data
+string message = "Secret message for future generations";
+byte[] data = Encoding.ASCII.GetBytes(message);;
+
+// Encrypt data
+byte[] cipher = new byte[data.Length + Hydrogen.Library.headerBytes];
+
+if (Hydrogen.Library.Encrypt(cipher, data, data.Length, context, key))
+	Console.WriteLine("Data successfully encrypted!");
+
+// Decrypt data
+byte[] data = new byte[cipher.Length - Hydrogen.Library.headerBytes];
+
+if (Hydrogen.Library.Decrypt(data, cipher, cipher.Length, context, key))
+	Console.WriteLine("Data successfully decrypted!");
+```
+
 ##### Secure network communication based on Noise protocol:
 ```c#
 // Server
@@ -117,6 +141,7 @@ string message = "Do you want to take a look at my high-poly things tonight?";
 byte[] data = Encoding.ASCII.GetBytes(message);;
 byte[] packet = new byte[data.Length + Hydrogen.Library.headerBytes];
 
+// Encrypt data
 if (Hydrogen.Library.Encrypt(packet, data, data.Length, context, clientSessionKeyPair.sendKey))
 	Console.WriteLine("Data successfully encrypted!");
 
@@ -125,6 +150,7 @@ if (Hydrogen.Library.Encrypt(packet, data, data.Length, context, clientSessionKe
 // Server
 byte[] data = new byte[packet.Length - Hydrogen.Library.headerBytes];
 
+// Decrypt data
 if (Hydrogen.Library.Decrypt(data, packet, packet.Length, context, serverSessionKeyPair.receiveKey))
 	Console.WriteLine("Data successfully decrypted!");
 
