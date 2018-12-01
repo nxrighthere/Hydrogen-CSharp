@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  Managed C# wrapper for Hydrogen cryptographic library by Frank Denis 
  *  Copyright (c) 2018 Stanislav Denisov
  *
@@ -50,6 +50,7 @@ namespace Hydrogen {
 		public const int masterKeyBytes = 32;
 		public const int storedBytes = 128;
 		public const int headerBytes = 20 + 16;
+		public const int secretKeyBytes = 32;
 		public const int probeBytes = 16;
 		public const int packetBytes = 32;
 
@@ -185,6 +186,16 @@ namespace Hydrogen {
 		#if HYDROGEN_INLINING
 			[MethodImpl(256)]
 		#endif
+		public static void SecretKeygen(byte[] key) {
+			if (key.Length != Library.secretKeyBytes)
+				throw new ArgumentOutOfRangeException();
+
+			Native.hydro_secretbox_keygen(key);
+		}
+
+		#if HYDROGEN_INLINING
+			[MethodImpl(256)]
+		#endif
 		public static bool Encrypt(IntPtr packet, byte[] message, int messageLength, string context, byte[] key) {
 			if (messageLength < 0)
 				throw new ArgumentOutOfRangeException();
@@ -295,6 +306,9 @@ namespace Hydrogen {
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int hydro_kx_n_2(out SessionKeyPair sessionKeyPair, byte[] packet, IntPtr secretKey, ref KeyPair keyPair);
+
+		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void hydro_secretbox_keygen(byte[] key);
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int hydro_secretbox_encrypt(IntPtr packet, byte[] message, int messageLength, ulong messageID, string context, byte[] key);
