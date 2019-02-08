@@ -29,7 +29,7 @@ string context = "hydrocontext";
 ##### Generic hashing:
 ```c#
 string message = "Arbitrary data to hash";
-byte[] data = Encoding.ASCII.GetBytes(message);;
+byte[] data = Encoding.ASCII.GetBytes(message);
 int hashLength = 16;
 byte[] hash = new byte[hashLength]; // Storage for hash
 
@@ -148,7 +148,7 @@ if (Hydrogen.Library.N2(out serverSessionKeyPair, packet, ref serverKeyPair))
 
 // Client
 string message = "Do you want to take a look at my high-poly things tonight?";
-byte[] data = Encoding.ASCII.GetBytes(message);;
+byte[] data = Encoding.ASCII.GetBytes(message);
 byte[] packet = new byte[data.Length + Hydrogen.Library.headerBytes];
 
 // Encrypt data
