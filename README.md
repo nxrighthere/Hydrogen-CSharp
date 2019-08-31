@@ -6,6 +6,10 @@
 
 This repository provides a managed C# wrapper for [Hydrogen](https://github.com/jedisct1/libhydrogen) cryptographic library which is created and maintained by [Frank Denis](https://github.com/jedisct1). You will need to [build](https://github.com/jedisct1/libhydrogen/wiki/Installation#downloading-the-source-code) the native library before you get started.
 
+Building
+--------
+A managed assembly can be built using any available compiling platform that supports C# 3.0 or higher.
+
 Usage
 --------
 Before starting to work, the library should be initialized using `Hydrogen.Library.Initialize();` function.
