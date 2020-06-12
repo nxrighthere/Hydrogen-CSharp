@@ -1,5 +1,5 @@
 /*
- *  Managed C# wrapper for Hydrogen cryptographic library by Frank Denis 
+ *  Managed C# wrapper for Hydrogen cryptographic library by Frank Denis
  *  Copyright (c) 2018 Stanislav Denisov
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -58,16 +58,12 @@ namespace Hydrogen {
 			return Native.hydro_init() == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static uint Random() {
 			return Random(0);
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static uint Random(uint upperBound) {
 			if (upperBound > 0)
 				return Native.hydro_random_uniform(upperBound);
@@ -75,9 +71,7 @@ namespace Hydrogen {
 			return Native.hydro_random_u32();
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static void HashKeygen(byte[] key) {
 			if (key.Length != Library.hashKeyBytes)
 				throw new ArgumentOutOfRangeException();
@@ -85,9 +79,7 @@ namespace Hydrogen {
 			Native.hydro_hash_keygen(key);
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool Hash(byte[] hash, int hashLength, byte[] message, int messageLength, string context) {
 			if (hashLength < 0 || messageLength < 0 || hashLength < Library.hashBytesMin || hashLength > Library.hashBytesMax)
 				throw new ArgumentOutOfRangeException();
@@ -95,9 +87,7 @@ namespace Hydrogen {
 			return Native.hydro_hash_hash(hash, (IntPtr)hashLength, message, (IntPtr)messageLength, context, IntPtr.Zero) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool Hash(byte[] hash, int hashLength, byte[] message, int messageLength, string context, byte[] key) {
 			if (hashLength < 0 || messageLength < 0 || hashLength < Library.hashBytesMin || hashLength > Library.hashBytesMax)
 				throw new ArgumentOutOfRangeException();
@@ -105,9 +95,7 @@ namespace Hydrogen {
 			return Native.hydro_hash_hash(hash, (IntPtr)hashLength, message, (IntPtr)messageLength, context, key) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static void MasterKeygen(byte[] key) {
 			if (key.Length != Library.masterKeyBytes)
 				throw new ArgumentOutOfRangeException();
@@ -115,9 +103,7 @@ namespace Hydrogen {
 			Native.hydro_pwhash_keygen(key);
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool DeterministicKey(byte[] key, int keyLength, string password, int passwordLength, string context, byte[] masterKey, ulong iterationsLimit, int memoryLimit, byte threads) {
 			if (keyLength < 0 || passwordLength < 0 || memoryLimit < 0)
 				throw new ArgumentOutOfRangeException();
@@ -125,9 +111,7 @@ namespace Hydrogen {
 			return Native.hydro_pwhash_deterministic(key, (IntPtr)keyLength, password, (IntPtr)passwordLength, context, masterKey, iterationsLimit, (IntPtr)memoryLimit, threads) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool StorageKey(byte[] key, string password, int passwordLength, byte[] masterKey, ulong iterationsLimit, int memoryLimit, byte threads) {
 			if (passwordLength < 0 || memoryLimit < 0 || key.Length != Library.storedBytes)
 				throw new ArgumentOutOfRangeException();
@@ -135,9 +119,7 @@ namespace Hydrogen {
 			return Native.hydro_pwhash_create(key, password, (IntPtr)passwordLength, masterKey, iterationsLimit, (IntPtr)memoryLimit, threads) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool VerifyKey(byte[] key, string password, int passwordLength, byte[] masterKey, ulong iterationsLimit, int memoryLimit, byte threads) {
 			if (passwordLength < 0 || memoryLimit < 0)
 				throw new ArgumentOutOfRangeException();
@@ -145,16 +127,12 @@ namespace Hydrogen {
 			return Native.hydro_pwhash_verify(key, password, (IntPtr)passwordLength, masterKey, iterationsLimit, (IntPtr)memoryLimit, threads) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool ReencryptKey(byte[] key, byte[] masterKey, byte[] newMasterKey) {
 			return Native.hydro_pwhash_reencrypt(key, masterKey, newMasterKey) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool UpgradeKey(byte[] key, byte[] masterKey, ulong iterationsLimit, int memoryLimit, byte threads) {
 			if (memoryLimit < 0)
 				throw new ArgumentOutOfRangeException();
@@ -162,30 +140,22 @@ namespace Hydrogen {
 			return Native.hydro_pwhash_upgrade(key, masterKey, iterationsLimit, (IntPtr)memoryLimit, threads) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static void ExchangeKeygen(out KeyPair keyPair) {
 			Native.hydro_kx_keygen(out keyPair);
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool N1(out SessionKeyPair sessionKeyPair, byte[] packet, byte[] publicKey) {
 			return Native.hydro_kx_n_1(out sessionKeyPair, packet, IntPtr.Zero, publicKey) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool N2(out SessionKeyPair sessionKeyPair, byte[] packet, ref KeyPair keyPair) {
 			return Native.hydro_kx_n_2(out sessionKeyPair, packet, IntPtr.Zero, ref keyPair) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static void SecretKeygen(byte[] key) {
 			if (key.Length != Library.secretKeyBytes)
 				throw new ArgumentOutOfRangeException();
@@ -193,9 +163,7 @@ namespace Hydrogen {
 			Native.hydro_secretbox_keygen(key);
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool Encrypt(IntPtr packet, byte[] message, int messageLength, string context, byte[] key) {
 			if (messageLength < 0)
 				throw new ArgumentOutOfRangeException();
@@ -203,9 +171,7 @@ namespace Hydrogen {
 			return Native.hydro_secretbox_encrypt(packet, message, messageLength, 0, context, key) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool Encrypt(byte[] packet, byte[] message, int messageLength, string context, byte[] key) {
 			if (messageLength < 0)
 				throw new ArgumentOutOfRangeException();
@@ -213,9 +179,7 @@ namespace Hydrogen {
 			return Native.hydro_secretbox_encrypt(packet, message, messageLength, 0, context, key) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool Decrypt(byte[] message, IntPtr packet, int packetLength, string context, byte[] key) {
 			if (packetLength < 0)
 				throw new ArgumentOutOfRangeException();
@@ -223,9 +187,7 @@ namespace Hydrogen {
 			return Native.hydro_secretbox_decrypt(message, packet, packetLength, 0, context, key) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool Decrypt(byte[] message, byte[] packet, int packetLength, string context, byte[] key) {
 			if (packetLength < 0)
 				throw new ArgumentOutOfRangeException();
@@ -233,9 +195,7 @@ namespace Hydrogen {
 			return Native.hydro_secretbox_decrypt(message, packet, packetLength, 0, context, key) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool CreateProbe(byte[] probe, byte[] cipher, int cipherLength, string context, byte[] key) {
 			if (probe.Length != Library.probeBytes || cipherLength < 0)
 				throw new ArgumentOutOfRangeException();
@@ -243,9 +203,7 @@ namespace Hydrogen {
 			return Native.hydro_secretbox_probe_create(probe, cipher, (IntPtr)cipherLength, context, key) == 0;
 		}
 
-		#if HYDROGEN_INLINING
-			[MethodImpl(256)]
-		#endif
+		[MethodImpl(256)]
 		public static bool VerifyProbe(byte[] probe, byte[] cipher, int cipherLength, string context, byte[] key) {
 			if (probe.Length != Library.probeBytes || cipherLength < 0)
 				throw new ArgumentOutOfRangeException();
