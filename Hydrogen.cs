@@ -43,6 +43,16 @@ namespace Hydrogen {
 		public byte[] sendKey;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	public struct KeyState {
+		private KeyPair ephemeralKeyPair;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+		private uint[] state;
+		private byte offset;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+		private byte[] align;
+	}
+
 	public static class Library {
 		public const int hashKeyBytes = 32;
 		public const int hashBytesMin = 16;
@@ -52,7 +62,7 @@ namespace Hydrogen {
 		public const int headerBytes = 20 + 16;
 		public const int secretKeyBytes = 32;
 		public const int probeBytes = 16;
-		public const int packetBytes = 32;
+		public const int packetBytes = 32 + 16;
 
 		public static bool Initialize() {
 			return Native.hydro_init() == 0;
@@ -153,6 +163,21 @@ namespace Hydrogen {
 		[MethodImpl(256)]
 		public static bool N2(out SessionKeyPair sessionKeyPair, byte[] packet, ref KeyPair keyPair) {
 			return Native.hydro_kx_n_2(out sessionKeyPair, packet, IntPtr.Zero, ref keyPair) == 0;
+		}
+
+		[MethodImpl(256)]
+		public static bool KK1(out KeyState keyState, byte[] packet, byte[] publicKey, ref KeyPair keyPair) {
+			return Native.hydro_kx_kk_1(out keyState, packet, publicKey, ref keyPair) == 0;
+		}
+
+		[MethodImpl(256)]
+		public static bool KK2(out SessionKeyPair sessionKeyPair, byte[] packet, byte[] initialPacket, byte[] publicKey, ref KeyPair keyPair) {
+			return Native.hydro_kx_kk_2(out sessionKeyPair, packet, initialPacket, publicKey, ref keyPair) == 0;
+		}
+
+		[MethodImpl(256)]
+		public static bool KK3(ref KeyState keyState, out SessionKeyPair sessionKeyPair, byte[] packet, ref KeyPair keyPair) {
+			return Native.hydro_kx_kk_3(ref keyState, out sessionKeyPair, packet, ref keyPair) == 0;
 		}
 
 		[MethodImpl(256)]
@@ -266,16 +291,25 @@ namespace Hydrogen {
 		internal static extern int hydro_kx_n_2(out SessionKeyPair sessionKeyPair, byte[] packet, IntPtr secretKey, ref KeyPair keyPair);
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int hydro_kx_kk_1(out KeyState keyState, byte[] packet, byte[] publicKey, ref KeyPair keyPair);
+
+		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int hydro_kx_kk_2(out SessionKeyPair sessionKeyPair, byte[] packet, byte[] initialPacket, byte[] publicKey, ref KeyPair keyPair);
+
+		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int hydro_kx_kk_3(ref KeyState keyState, out SessionKeyPair sessionKeyPair, byte[] packet, ref KeyPair keyPair);
+
+		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void hydro_secretbox_keygen(byte[] key);
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int hydro_secretbox_encrypt(IntPtr packet, byte[] message, int messageLength, ulong messageID, string context, byte[] key);
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int hydro_secretbox_decrypt(byte[] message, IntPtr packet, int packetLength, ulong messageID, string context, byte[] key);
+		internal static extern int hydro_secretbox_encrypt(byte[] packet, byte[] message, int messageLength, ulong messageID, string context, byte[] key);
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int hydro_secretbox_encrypt(byte[] packet, byte[] message, int messageLength, ulong messageID, string context, byte[] key);
+		internal static extern int hydro_secretbox_decrypt(byte[] message, IntPtr packet, int packetLength, ulong messageID, string context, byte[] key);
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int hydro_secretbox_decrypt(byte[] message, byte[] packet, int packetLength, ulong messageID, string context, byte[] key);
