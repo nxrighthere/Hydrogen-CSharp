@@ -121,7 +121,7 @@ if (Hydrogen.Library.Decrypt(data, cipher, cipher.Length, context, key))
 	Console.WriteLine("Data successfully decrypted!");
 ```
 
-##### Secure network communication based on Noise protocol:
+##### Secure network communication based on the Noise protocol (N variant):
 ```c#
 // Server
 KeyPair serverKeyPair = default(KeyPair);
@@ -136,7 +136,7 @@ SessionKeyPair clientSessionKeyPair = default(SessionKeyPair);
 byte[] packet = new byte[Hydrogen.Library.packetBytes];
 
 // Generate session keys and a packet with an ephemeral public key
-if (Hydrogen.Library.N1(out clientSessionKeyPair, packet, serverKeyPair.publicKey)))
+if (Hydrogen.Library.N1(out clientSessionKeyPair, packet, serverKeyPair.publicKey))
 	Console.WriteLine("Session key pair successfully generated!");
 
 /* Send `packet` to the server */
@@ -152,6 +152,72 @@ if (Hydrogen.Library.N2(out serverSessionKeyPair, packet, ref serverKeyPair))
 
 // Client
 string message = "Do you want to take a look at my high-poly things tonight?";
+byte[] data = Encoding.ASCII.GetBytes(message);
+byte[] packet = new byte[data.Length + Hydrogen.Library.headerBytes];
+
+// Encrypt data
+if (Hydrogen.Library.Encrypt(packet, data, data.Length, context, clientSessionKeyPair.sendKey))
+	Console.WriteLine("Data successfully encrypted!");
+
+/* Send `packet` to the server */
+
+// Server
+byte[] data = new byte[packet.Length - Hydrogen.Library.headerBytes];
+
+// Decrypt data
+if (Hydrogen.Library.Decrypt(data, packet, packet.Length, context, serverSessionKeyPair.receiveKey))
+	Console.WriteLine("Data successfully decrypted!");
+
+Console.WriteLine("Received message: " + Encoding.ASCII.GetString(data));
+```
+
+##### Secure network communication based on the Noise protocol (KK variant):
+```c#
+// Client
+KeyPair clientKeyPair = default(KeyPair);
+
+// Generate long-term key pair
+Hydrogen.Library.ExchangeKeygen(out clientKeyPair);
+
+// Server
+KeyPair serverKeyPair = default(KeyPair);
+
+// Generate long-term key pair
+Hydrogen.Library.ExchangeKeygen(out serverKeyPair);
+
+/* Send `serverKeyPair.publicKey` to the client */
+
+// Client
+KeyState clientState = default(KeyState);
+byte[] initialPacket = new byte[Hydrogen.Library.packetBytes];
+
+// Initiate a key exchange
+if (Hydrogen.Library.KK1(out clientState, initialPacket, serverKeyPair.publicKey, ref clientKeyPair))
+	Console.WriteLine("Initial packet successfully generated!");
+
+/* Send `initialPacket` to the server */
+
+// Server
+SessionKeyPair serverSessionKeyPair = default(SessionKeyPair);
+byte[] packet = new byte[Hydrogen.Library.packetBytes];
+
+// Process the initial request from the client, and generate session keys
+if (Hydrogen.Library.KK2(out serverSessionKeyPair, packet, initialPacket, clientKeyPair.publicKey, ref serverKeyPair))
+	Console.WriteLine("Session key pair successfully generated!");
+
+/* Send `packet` to the client */
+
+// Client
+SessionKeyPair clientSessionKeyPair = default(SessionKeyPair);
+
+// Process the server packet and generate session keys
+if (Hydrogen.Library.KK3(ref clientState, out clientSessionKeyPair, packet, ref clientKeyPair))
+	Console.WriteLine("Session key pair successfully generated!");
+
+/* Send a signal to the server that secure communication is established */
+
+// Client
+string message = "Hold my beer";
 byte[] data = Encoding.ASCII.GetBytes(message);
 byte[] packet = new byte[data.Length + Hydrogen.Library.headerBytes];
 
