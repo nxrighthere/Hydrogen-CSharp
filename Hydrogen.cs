@@ -44,13 +44,31 @@ namespace Hydrogen {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct KeyState {
-		private KeyPair ephemeralKeyPair;
+	public struct HashState {
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
 		private uint[] state;
 		private byte offset;
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
 		private byte[] align;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct KeyState {
+		private KeyPair ephemeralKeyPair;
+		private HashState hashState;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct SignKeyPair {
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+		public byte[] publicKey;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+		public byte[] secretKey;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct SignState {
+		private HashState hashState;
 	}
 
 	public static class Library {
@@ -63,6 +81,9 @@ namespace Hydrogen {
 		public const int secretKeyBytes = 32;
 		public const int probeBytes = 16;
 		public const int packetBytes = 32 + 16;
+		public const int signPublicKeyBytes = 32;
+		public const int signSecretKeyBytes = 64;
+		public const int signBytes = 64;
 
 		public static bool Initialize() {
 			return Native.hydro_init() == 0;
@@ -235,6 +256,26 @@ namespace Hydrogen {
 
 			return Native.hydro_secretbox_probe_verify(probe, cipher, (IntPtr)cipherLength, context, key) == 0;
 		}
+
+		[MethodImpl(256)]
+		public static void SignKeygen(out SignKeyPair keyPair) {
+			Native.hydro_sign_keygen(out keyPair);
+		}
+
+		[MethodImpl(256)]
+		public static bool SignInit(out SignState signState, string context) {
+			return Native.hydro_sign_init(out signState, context) == 0;
+		}
+
+		[MethodImpl(256)]
+		public static bool SignCreate(byte[] sig, byte[] message, int messageLength, string context, byte[] key) {
+			return Native.hydro_sign_create(sig, message, messageLength, context, key) == 0;
+		}
+
+		[MethodImpl(256)]
+		public static bool SignVerify(byte[] sig, byte[] message, int messageLength, string context, byte[] key) {
+			return Native.hydro_sign_verify(sig, message, messageLength, context, key) == 0;
+		}
 	}
 
 	[SuppressUnmanagedCodeSecurity]
@@ -319,5 +360,17 @@ namespace Hydrogen {
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int hydro_secretbox_probe_verify(byte[] probe, byte[] cipher, IntPtr cipherLength, string context, byte[] key);
+
+		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void hydro_sign_keygen(out SignKeyPair keyPair);
+
+		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int hydro_sign_init(out SignState signState, string context);
+
+		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int hydro_sign_create(byte[] csig, byte[] message, int messageLength, string context, byte[] key);
+
+		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int hydro_sign_verify(byte[] csig, byte[] message, int messageLength, string context, byte[] key);
 	}
 }
