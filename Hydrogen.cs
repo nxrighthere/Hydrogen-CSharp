@@ -268,8 +268,8 @@ namespace Hydrogen {
 		}
 
 		[MethodImpl(256)]
-		public static bool SignCreate(out byte[] sig, byte[] message, int messageLength, string context, byte[] key) {
-			return Native.hydro_sign_create(out sig, message, messageLength, context, key) == 0;
+		public static bool SignCreate(byte[] sig, byte[] message, int messageLength, string context, byte[] key) {
+			return Native.hydro_sign_create(sig, message, messageLength, context, key) == 0;
 		}
 
 		[MethodImpl(256)]
@@ -368,7 +368,7 @@ namespace Hydrogen {
 		internal static extern int hydro_sign_init(out SignState signState, string context);
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int hydro_sign_create([Out] byte[] csig, byte[] message, int messageLength, string context, byte[] key);
+		internal static extern int hydro_sign_create(byte[] csig, byte[] message, int messageLength, string context, byte[] key);
 
 		[DllImport(nativeLibrary, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int hydro_sign_verify(byte[] csig, byte[] message, int messageLength, string context, byte[] key);
