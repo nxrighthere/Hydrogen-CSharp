@@ -237,26 +237,23 @@ if (Hydrogen.Library.Decrypt(data, packet, packet.Length, context, serverSession
 Console.WriteLine("Received message: " + Encoding.ASCII.GetString(data));
 ```
 
-##### Public/Private Key Signatures:
+##### Public/Private key signatures:
 ```c#
-Hydrogen.Library.Initialize();
-
 SignKeyPair keyPair = default(SignKeyPair);
 
 // Generate key pair
 Hydrogen.Library.SignKeygen(out keyPair);
 
-byte[] sig = new byte[signBytes];
+byte[] signature = new byte[signBytes];
 
 string message = "'You can't give her that!' she screamed. 'It's not safe!' IT'S A SWORD, said the Hogfather. THEY'RE NOT MEANT TO BE SAFE.";
 byte[] data = Encoding.ASCII.GetBytes(message);
 
 // Sign the message
-if(Hydrogen.Library.SignCreate(sig, data, data.Length, context, keyPair.secretKey))
+if(Hydrogen.Library.SignCreate(signature, data, data.Length, context, keyPair.secretKey))
 	Console.WriteLine("Message successfully signed!");
 
 // Verify the signature
-if(Hydrogen.Library.SignVerify(sig, data, data.Length, context, keyPair.publicKey))
+if(Hydrogen.Library.SignVerify(signature, data, data.Length, context, keyPair.publicKey))
 	Console.WriteLine("Message signature successfully verified!");
-
 ```
