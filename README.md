@@ -14,7 +14,7 @@ Usage
 --------
 Before starting to work, the library should be initialized using `Hydrogen.Library.Initialize();` function.
 
-##### Generate random data:
+##### Generate random data
 ```c#
 // Unbounded
 uint data = Hydrogen.Library.Random();
@@ -24,13 +24,13 @@ uint upperBound = 1000000;
 uint data = Hydrogen.Library.Random(upperBound);
 ```
 
-##### Declare a new context:
+##### Declare a new context
 ```c#
 // Only the first 8 characters will be used
 string context = "hydrocontext";
 ```
 
-##### Generic hashing:
+##### Generic hashing
 ```c#
 string message = "Arbitrary data to hash";
 byte[] data = Encoding.ASCII.GetBytes(message);
@@ -50,7 +50,7 @@ if (Hydrogen.Library.Hash(hash, hashLength, data, data.Length, context, hashKey)
 	Console.WriteLine("Hash successfully generated using key!");
 ```
 
-##### Password hashing:
+##### Password hashing
 ```c#
 string password = "feelsgoodman";
 byte[] masterKey = new byte[Hydrogen.Library.masterKeyBytes];
@@ -87,7 +87,7 @@ if (Hydrogen.Library.UpgradeKey(storedKey, newMasterKey, 2000, 1024, 2))
 	Console.WriteLine("Stored key successfully upgraded!");
 ```
 
-##### Secret key encryption:
+##### Secret key encryption
 ```c#
 byte[] key = new byte[Hydrogen.Library.secretKeyBytes]; // Storage for secret key
 
@@ -121,7 +121,7 @@ if (Hydrogen.Library.Decrypt(data, cipher, cipher.Length, context, key))
 	Console.WriteLine("Data successfully decrypted!");
 ```
 
-##### Secure network communication based on the Noise protocol (N variant):
+##### Secure network communication based on the Noise protocol (N variant)
 ```c#
 // Server
 KeyPair serverKeyPair = default(KeyPair);
@@ -171,7 +171,7 @@ if (Hydrogen.Library.Decrypt(data, packet, packet.Length, context, serverSession
 Console.WriteLine("Received message: " + Encoding.ASCII.GetString(data));
 ```
 
-##### Secure network communication based on the Noise protocol (KK variant):
+##### Secure network communication based on the Noise protocol (KK variant)
 ```c#
 // Client
 KeyPair clientKeyPair = default(KeyPair);
@@ -237,7 +237,7 @@ if (Hydrogen.Library.Decrypt(data, packet, packet.Length, context, serverSession
 Console.WriteLine("Received message: " + Encoding.ASCII.GetString(data));
 ```
 
-##### Public/Private key signatures:
+##### Public/Private key signatures
 ```c#
 SignKeyPair keyPair = default(SignKeyPair);
 
