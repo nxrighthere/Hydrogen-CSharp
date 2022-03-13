@@ -2,8 +2,6 @@
   <img src="https://i.imgur.com/VsCHqUk.png" alt="alt logo">
 </p>
 
-[![PayPal](https://github.com/Rageware/Shields/blob/master/paypal.svg)](https://www.paypal.me/nxrighthere) [![Coinbase](https://github.com/Rageware/Shields/blob/master/coinbase.svg)](https://commerce.coinbase.com/checkout/03e11816-b6fc-4e14-b974-29a1d0886697)
-
 This repository provides a managed C# wrapper for [Hydrogen](https://github.com/jedisct1/libhydrogen) cryptographic library which is created and maintained by [Frank Denis](https://github.com/jedisct1). You will need to [build](https://github.com/jedisct1/libhydrogen/wiki/Installation#downloading-the-source-code) the native library before you get started.
 
 Building
